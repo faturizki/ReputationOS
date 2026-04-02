@@ -1,0 +1,14 @@
+{
+  "name": "reputation-os",
+  "private": true,
+  "packageManager": "pnpm@10.23.0",
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "turbo lint",
+    "clean": "turbo clean"
+  },
+  "devDependencies": {
+    "turbo": "^2.0.0"
+  }
+}

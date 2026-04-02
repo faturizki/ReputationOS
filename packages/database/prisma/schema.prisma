@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Case {
+  id                String   @id @default(cuid())
+  client_name       String
+  keywords          String[]
+  status            String   @default("pending")
+  risk_score        Float    @default(0)
+  difficulty_level  String   @default("medium")
+  created_at        DateTime @default(now())
+
+  tasks             Task[]
+  strategies        Strategy[]
+  scan_results      ScanResult[]
+
+  @@map("cases")
+}
+
+model Task {
+  id          String   @id @default(cuid())
+  case_id     String
+  type        String
+  description String
+  assigned_to String?
+  status      String   @default("pending")
+  due_date    DateTime?
+  created_at  DateTime @default(now())
+
+  case        Case     @relation(fields: [case_id], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+model Strategy {
+  id                  String   @id @default(cuid())
+  case_id             String
+  actions             Json
+  estimated_duration  Int
+  created_at          DateTime @default(now())
+
+  case                Case     @relation(fields: [case_id], references: [id], onDelete: Cascade)
+
+  @@map("strategies")
+}
+
+model ScanResult {
+  id               String   @id @default(cuid())
+  case_id          String
+  url              String
+  title            String
+  snippet          String
+  sentiment_score  Float
+  risk_flag        Boolean  @default(false)
+  created_at       DateTime @default(now())
+
+  case             Case     @relation(fields: [case_id], references: [id], onDelete: Cascade)
+
+  @@map("scan_results")
+}
+
+model Ranking {
+  id        String   @id @default(cuid())
+  keyword   String
+  url       String
+  position  Int
+  date      DateTime @default(now())
+
+  @@map("rankings")
+}
